@@ -48,17 +48,24 @@
   header {
     margin-bottom: 28px;
   }
-  header h1 {
-    font-size: 15px;
-    font-weight: 500;
-    margin: 0 0 2px;
-    color: var(--text);
-    letter-spacing: -0.01em;
-  }
-  header p {
-    margin: 0;
+  header .card-name {
     font-size: 13px;
     color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  header .balance-amount {
+    font-family: 'DM Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  header .balance-meta {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 4px;
   }
   .num {
     font-family: 'DM Mono', ui-monospace, monospace;
@@ -268,8 +275,9 @@
 <body>
 <main>
   <header>
-    <h1>Capital One VentureOne · 7603</h1>
-    <p>payoff calculator</p>
+    <div class="card-name">Capital One VentureOne · 7603 · payoff calculator</div>
+    <div class="balance-amount">$5,304.64</div>
+    <div class="balance-meta">current balance · 24.49% APR</div>
   </header>
 
   <section class="sliders">
@@ -339,7 +347,7 @@
   <div class="pitch" id="pitch"></div>
 
   <footer>
-    Built with current balance of $5,304.64 at 24.49% APR · for informational use
+    For informational use only
   </footer>
 </main>
 
