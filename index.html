@@ -270,13 +270,14 @@
       font-size: 20px;
     }
   }
+.balance-input{width:100%;font-family:"DM Mono",ui-monospace,monospace;font-size:36px;font-weight:500;border:none;background:transparent;color:var(--text);outline:none;padding:0;line-height:1.1;}
 </style>
 </head>
 <body>
 <main>
   <header>
     <div class="card-name">Capital One VentureOne · 7603 · payoff calculator</div>
-    <div class="balance-amount">$7,444.87</div>
+    <input id="balanceInput" type="number" min="0" step="0.01" value="7444.87" class="balance-input">
     <div class="balance-meta">current balance · 24.49% APR</div>
   </header>
 
@@ -352,8 +353,7 @@
 </main>
 
 <script>
-  const STARTING_BALANCE = 7444.87;
-  const APR = 0.2449;
+    const APR = 0.2449;
   const MONTHLY_RATE = APR / 12;
   const MAX_MONTHS = 720;
   const CHART_CAP = 300;
@@ -551,7 +551,7 @@
     }
 
     if (lump === 0 && monthly <= 200) {
-      const drainPerMonth = STARTING_BALANCE * MONTHLY_RATE;
+      const drainPerMonth = startingBalance * MONTHLY_RATE;
       return 'At this pace, payoff takes <strong>' + monthsText + '</strong> and the card quietly drains about <strong>' + fmtMoney2(drainPerMonth) + '</strong> in interest every month. Bumping the monthly payment is the fastest lever you have.';
     }
 
@@ -565,21 +565,25 @@
 
   const lumpEl = document.getElementById('lump');
   const monthlyEl = document.getElementById('monthly');
+  const balanceEl=document.getElementById('balanceInput');
   const lumpValEl = document.getElementById('lumpValue');
   const monthlyValEl = document.getElementById('monthlyValue');
 
   function update() {
-    const lump = parseFloat(lumpEl.value);
+    const startingBalance=Math.max(0,parseFloat(balanceEl.value)||0);
+    lumpEl.max=Math.ceil(startingBalance/50)*50;
+    if(parseFloat(lumpEl.value)>startingBalance) lumpEl.value=startingBalance;
+    const lump=parseFloat(lumpEl.value);
     const monthly = parseFloat(monthlyEl.value);
 
     lumpValEl.textContent = fmtMoney(lump);
     monthlyValEl.textContent = fmtMoney(monthly);
 
-    const minResult = simulateMin(STARTING_BALANCE);
-    const yourResult = simulateFixed(STARTING_BALANCE, lump, monthly);
-    const fixedResult = simulateFixed(STARTING_BALANCE, 0, 500);
+    const minResult = simulateMin(startingBalance);
+    const yourResult = simulateFixed(startingBalance, lump, monthly);
+    const fixedResult = simulateFixed(startingBalance, 0, 500);
 
-    document.getElementById('interestMonth').textContent = fmtMoney2(STARTING_BALANCE * MONTHLY_RATE);
+    document.getElementById('interestMonth').textContent = fmtMoney2(startingBalance * MONTHLY_RATE);
     document.getElementById('payoffTime').textContent = fmtTime(yourResult.months);
     document.getElementById('totalInterest').textContent = fmtMoney(yourResult.totalInterest);
 
@@ -602,6 +606,7 @@
 
   lumpEl.addEventListener('input', update);
   monthlyEl.addEventListener('input', update);
+  balanceEl.addEventListener('input', update);
 
   if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', update);
